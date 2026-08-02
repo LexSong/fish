@@ -1,5 +1,22 @@
 # fish config repo notes
 
+## Environment / running fish
+
+The user's **interactive** shell is MSYS2 Fish (root `scoop/apps/msys2/current`,
+`MSYSTEM=MSYS`) — a deliberately *thin* layer holding fish + bash + coreutils and
+essentially nothing else. All real tooling (`rg`, `fd`, `uv`, `git`, `just`, …)
+comes from scoop shims on the shared Windows PATH and works from either side, so
+the two MINGW roots almost never matter in practice.
+
+**`fish` is not on my PATH**, and heavy work should not go through it anyway.
+Invoke it only to run or validate fish config:
+
+- Full login env: `msys2 -no-start -defterm -shell fish -here -c '<fish code>'`
+  (`-where DIR` to set cwd; `-no-start` is what runs it inline and propagates the
+  exit code — without it the launcher detaches).
+- Quick syntax check, no login env needed:
+  `/c/Users/LexSong/scoop/apps/msys2/current/usr/bin/fish.exe -n file.fish`.
+
 ## Fixing regenerated `completions/sbx.exe.fish`
 
 `sbx` (Cobra-based) can regenerate its own fish completion file (e.g. via
