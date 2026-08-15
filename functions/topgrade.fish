@@ -1,4 +1,6 @@
 function topgrade --description 'Update topgrade via scoop, run it (no self-update, skip powershell/system/store/vim), then update neovim plugins'
+    # scoop runs under pwsh, which is itself a scoop app, so it can't update pwsh.
+    powershell.exe -noprofile -ex unrestricted -command 'scoop.ps1 update pwsh'
     scoop update topgrade
     command topgrade --no-self-update --disable system microsoft_store powershell vim $argv
 
