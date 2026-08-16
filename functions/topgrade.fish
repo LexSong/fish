@@ -1,8 +1,16 @@
-function topgrade --description 'Update topgrade via scoop, run it (no self-update, skip powershell/system/store/vim), then update neovim plugins'
+function topgrade --description 'Update everything: topgrade, plus what it cannot update itself (pwsh, MSYS2, neovim)'
     # scoop runs under pwsh, which is itself a scoop app, so it can't update pwsh.
     powershell.exe -noprofile -ex unrestricted -command 'scoop.ps1 update pwsh'
     scoop update topgrade
     command topgrade --no-self-update --disable system microsoft_store powershell vim $argv
+
+    # topgrade has no MSYS2 step (its `dkp_pacman` is devkitPro's, not ours), and
+    # topgrade.exe is a scoop Windows binary that never sees MSYS2's pacman — so
+    # the shell we are running in is the one thing topgrade cannot update.
+    echo -e '\n―― MSYS2 ――'
+    # A pass that only upgrades the core (runtime, pacman) stops there and asks
+    # you to restart MSYS2; re-run `topgrade` after doing so to get the rest.
+    pacman -Syu
 
     # The `vim` step is disabled above and handled here instead: vim.pack is
     # driven directly, then blink.cmp's Rust fuzzy matcher is rebuilt against
