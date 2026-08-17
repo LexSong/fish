@@ -1,7 +1,8 @@
-function pyproject --description 'Copy the pyproject.toml template into the current directory'
+function pyproject --description 'Scaffold a Python project from the template in windows-setup'
     if test -e pyproject.toml
         echo 'pyproject.toml already exists' >&2
         return 1
     end
-    cp ~/windows-setup/pyproject.toml.template pyproject.toml
+    # `/.` copies the template's dotfiles too (.claude/); -n never clobbers.
+    cp -rn ~/windows-setup/pyproject-template/. .
 end
