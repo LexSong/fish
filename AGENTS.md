@@ -17,6 +17,20 @@ Invoke it only to run or validate fish config:
 - Quick syntax check, no login env needed:
   `/c/Users/LexSong/scoop/apps/msys2/current/usr/bin/fish.exe -n file.fish`.
 
+## What belongs here, and what goes to windows-setup
+
+Every function here wraps a command, and what it wraps decides where the work
+lives. `topgrade` and `gpu-limit` wrap `topgrade` and `nvidia-smi` —
+arrangements of commands that already exist, so they stay here however long they
+get. `yt-sub-txt`, `pyproject`, and `checkup` wrap a payload that had to be
+written; payloads don't belong in shell config, so those sit in
+`~/windows-setup/scripts/` and the function keeps only the invocation.
+
+Two cases are forced. A function that shadows the binary it calls (`restic`,
+`topgrade`, both using `command` inside) can only ever be a function. Anything a
+non-fish caller needs can only be a script — Claude's `SessionStart` hook runs
+`sh`, which is why `project-checkup.sh` lives over there.
+
 ## Completions: auto-discovery is not worth fixing here
 
 Completion harnesses solve **discovery**; shell history solves **repetition**.
