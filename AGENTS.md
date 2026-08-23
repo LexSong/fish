@@ -31,23 +31,16 @@ Two cases are forced. A function that shadows the binary it calls (`restic`,
 non-fish caller needs can only be a script — Claude's `SessionStart` hook runs
 `sh`, which is why `project-checkup.sh` lives over there.
 
-## Completions: auto-discovery is not worth fixing here
+## Completions
 
-Completion harnesses solve **discovery**; shell history solves **repetition**.
-This setup is repetition-shaped — the same handful of invocations, recalled
-whole by fish's autosuggestion, *including the argument values*. A completion
-file only ever offers the flag name.
+Ask the tool for the values at completion time. `just` has its own completion
+protocol. git answers with `for-each-ref` and `ls-files`. Nothing is stored here,
+so nothing goes stale.
 
-So: **no generated or vendored completion files.** They are a standing
-obligation — regenerate, re-apply fixes, keep stubs in sync — paid for a
-tab-complete. Don't add one back for a tool that lacks completions (yt-dlp
-generates its fish completion at build time and ships it in neither the repo
-nor the PyPI wheel; that is fine, leave it).
+Do not store completion data. No generated or vendored files, and no copy of a
+tool's flag list. A short static list is fine when the values almost never change,
+such as subcommand names.
 
-`completions/just.fish` is the one entry, and shows the bar: it is hand-written
-(so it never regenerates and never drifts), `just` is something we actually run,
-and it emits genuinely dynamic values — recipe names from whichever justfile is
-in scope, which history cannot cover. Clear all three or don't add it.
-
-If something ever genuinely itches, hand-write a line or two for the flags
-actually used.
+A tool's own mechanism is sometimes broken, and fish's bundled completion is
+sometimes too slow. We fix those here when the cost is reasonable. That is a
+judgement call per command. Ask.
