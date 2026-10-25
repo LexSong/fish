@@ -22,9 +22,9 @@ Invoke it only to run or validate fish config:
 Every function here wraps a command, and what it wraps decides where the work
 lives. `update-all` and `gpu-limit` wrap `topgrade` and `nvidia-smi` —
 arrangements of commands that already exist, so they stay here however long they
-get. `yt-sub-txt` and `checkup` wrap a payload that had to be written; payloads
-don't belong in shell config, so those sit in `~/windows-setup/scripts/` and the
-function keeps only the invocation.
+get. `checkup` wraps a payload that had to be written; payloads don't belong in
+shell config, so it sits in `~/windows-setup/scripts/` and the function keeps
+only the invocation.
 
 Two cases are forced. A function that shadows the binary it calls (`restic`,
 which uses `command` inside) can only ever be a function. Anything a
