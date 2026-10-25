@@ -28,8 +28,7 @@ written; payloads don't belong in shell config, so those sit in
 
 Two cases are forced. A function that shadows the binary it calls (`restic`,
 which uses `command` inside) can only ever be a function. Anything a
-non-fish caller needs can only be a script — Claude's `SessionStart` hook runs
-`sh`, which is why `project-checkup.sh` lives over there.
+non-fish caller needs can only be a script.
 
 ## Completions
 
