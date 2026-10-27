@@ -5,6 +5,10 @@ status is-interactive; or return
 # config.fish, so binds there win on any future conflict.
 fzf --fish | source
 
+# Every fzf widget reads this variable at run time, so one setting covers them
+# all. `--cycle` lets ctrl-j/k/n/p wrap around past the ends of the list.
+set -gx FZF_DEFAULT_OPTS --cycle
+
 # Tab uses fzf's fuzzy picker too. `--select-1` inserts a unique match without
 # showing the picker. Counting candidates in fish first would run completion
 # twice, and warm `git checkout ` completion alone takes ~2.5s here.
