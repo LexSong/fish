@@ -5,6 +5,15 @@ status is-interactive; or return
 # config.fish, so binds there win on any future conflict.
 fzf --fish | source
 
+# Tab uses fzf's fuzzy picker too. `--select-1` inserts a unique match without
+# showing the picker. Counting candidates in fish first would run completion
+# twice, and warm `git checkout ` completion alone takes ~2.5s here.
+# fzf_complete appends its arguments after its own `--multi`, and a later fzf
+# option wins, so `--no-multi` keeps multi-select on shift-tab only. Without
+# multi-select, tab is free inside the picker, so it accepts like enter.
+bind tab 'fzf_complete --select-1 --no-multi --bind=tab:accept'
+bind -M insert tab 'fzf_complete --select-1 --no-multi --bind=tab:accept'
+
 # fzf is a native exe, so MSYS2 rewrites `--walker-root=/d/foo` into `D:/foo`,
 # and the results come back as `D:/foo/...`. fish's cd rejects that form. These
 # two widgets are copied from fzf 0.74.5; the only change is the `cygpath -u`
