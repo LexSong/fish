@@ -1,14 +1,17 @@
 # fish config repo notes
 
-My interactive shell is MSYS2 fish. MSYS2 is a thin layer with fish, bash and
-coreutils. The real tools (`rg`, `fd`, `uv`, `git`, `just`) come from scoop shims
-on the Windows PATH, so they behave the same in fish and in Git Bash.
+My interactive shell is MSYS2 fish. MSYS2 is an emulation layer that provides
+fish, bash and coreutils. The real tools (`rg`, `fd`, `uv`, `git`, `just`) come
+from scoop shims on the Windows PATH, so they behave the same in fish and in
+Git Bash.
 
 ## Running fish
 
-Run fish only to test or check fish config. The `fish` on PATH is a scoop shim
-that starts the MSYS2 launcher without `-no-start`, so it detaches instead of
-running inline. Use these instead:
+Fish is for my interactive use only. Do your work in Git Bash, PowerShell or
+cmd, and start fish only to test this config.
+
+The `fish` on PATH is a scoop shim. It starts the MSYS2 launcher without
+`-no-start`, so it detaches instead of running inline. Use these instead:
 
 - Login environment: `msys2 -no-start -defterm -shell fish -here -c '<fish code>'`.
   `-no-start` runs it inline and passes back the exit code. `-where DIR` sets
@@ -17,25 +20,34 @@ running inline. Use these instead:
 
 ## What belongs here
 
-Every function here wraps a command. A function that arranges commands that
-already exist (`update-all` wraps `topgrade`, `gpu-limit` wraps `nvidia-smi`)
-stays here, however long it gets. A payload that had to be written doesn't
-belong in shell config. It goes to `~/windows-setup/scripts/` or to its own uv
-tool repo, and a function keeps at most the invocation.
+I read Python more easily than fish. Fish under MSYS2 also has performance
+quirks that we chase from time to time. So the fish code here stays as lean as
+possible. Write it only to solve a specific issue, never in advance.
 
-Two cases are forced. A function that shadows the binary it calls (`restic`,
-which uses `command` inside) can only be a function. Anything a non-fish caller
-needs must be a script or a uv tool.
+The same goes for speed: measure, don't guess. Time the code before and after
+a change, and report the numbers. Fish's `time` over-reports ~2.7x here, so
+time the whole `fish.exe -c` process from bash.
+
+Code that must run inside fish lives here: the prompt, event handlers, key
+bindings, completions, and functions that shadow a command (`restic`,
+`complete`). A function that runs commands I would otherwise type in fish also
+stays here (`update-all` runs the update commands in a row).
+
+Other logic goes to its own uv tool repo, and a function here keeps at most
+the invocation. A non-fish caller cannot call a fish function, so anything it
+needs goes to a uv tool too.
 
 ## Completions
 
-Ask the tool for the values at completion time. `just` has its own completion
-protocol, and git answers with `for-each-ref` and `ls-files`.
+A custom completion must earn its cost. That means a command I run often,
+whose values history cannot recall: `just` recipe names, `git` branches. Other
+commands rely on fish's general completion and history autosuggestion.
 
-Do not store completion data: no generated or vendored files, and no copy of a
-tool's flag list. A short static list is fine when the values almost never
-change, such as subcommand names.
+Ask the tool for the values at completion time, as `just` does with its own
+completion protocol. Do not store completion data: no generated or vendored
+files, and no copy of a tool's flag list. A short static list is fine when the
+values almost never change, such as subcommand names.
 
-Sometimes a tool's own completion is broken, or fish's bundled one is too slow.
-We fix those here when the cost is reasonable. That is a judgement call per
-command, so ask.
+A slow completion is better than a broken one. We fix a completion here when
+it is broken, or when I find it slow enough to be worth fixing. I judge that by
+feel, case by case, so ask first.
