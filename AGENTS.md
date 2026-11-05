@@ -29,9 +29,9 @@ a change, and report the numbers. Fish's `time` over-reports ~2.7x here, so
 time the whole `fish.exe -c` process from bash.
 
 Code that must run inside fish lives here: the prompt, event handlers, key
-bindings, completions, and functions that shadow a command (`restic`,
-`complete`). A function that runs commands I would otherwise type in fish also
-stays here (`update-all` runs the update commands in a row).
+bindings, completions, and functions that shadow a command (`restic`). A
+function that runs commands I would otherwise type in fish also stays here
+(`update-all` runs the update commands in a row).
 
 Other logic goes to its own uv tool repo, and a function here keeps at most
 the invocation. A non-fish caller cannot call a fish function, so anything it

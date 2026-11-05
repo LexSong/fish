@@ -9,14 +9,15 @@ fzf --fish | source
 # all. `--cycle` lets ctrl-j/k/n/p wrap around past the ends of the list.
 set -gx FZF_DEFAULT_OPTS --cycle
 
-# Tab uses fzf's fuzzy picker too. `--select-1` inserts a unique match without
-# showing the picker. Counting candidates in fish first would run completion
-# twice, and warm `git checkout ` completion alone takes ~2.5s here.
+# Tab and shift-tab both open fzf, through functions/fzf-tab.fish.
 # fzf_complete appends its arguments after its own `--multi`, and a later fzf
-# option wins, so `--no-multi` keeps multi-select on shift-tab only. Without
-# multi-select, tab is free inside the picker, so it accepts like enter.
-bind tab 'fzf_complete --select-1 --no-multi --bind=tab:accept'
-bind -M insert tab 'fzf_complete --select-1 --no-multi --bind=tab:accept'
+# option wins. So on Tab, `--no-multi` turns multi-select off. Tab is then free
+# inside the picker, so it accepts like enter. Shift-tab keeps multi-select, and
+# Tab inside the picker selects.
+bind tab 'fzf-tab --no-multi --bind=tab:accept'
+bind -M insert tab 'fzf-tab --no-multi --bind=tab:accept'
+bind shift-tab fzf-tab
+bind -M insert shift-tab fzf-tab
 
 # fzf is a native exe, so MSYS2 rewrites `--walker-root=/d/foo` into `D:/foo`,
 # and the results come back as `D:/foo/...`. fish's cd rejects that form. These
