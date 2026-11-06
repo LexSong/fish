@@ -35,7 +35,8 @@ stays here (`update-all` runs the update commands in a row).
 
 Other logic goes to its own uv tool repo, and a function here keeps at most
 the invocation. A non-fish caller cannot call a fish function, so anything it
-needs goes to a uv tool too.
+needs goes to a uv tool too. The exception is a few lines of shell around one
+native command, which go to `bin/` in the windows-setup repo.
 
 ## Completions
 
