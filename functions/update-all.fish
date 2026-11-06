@@ -24,4 +24,8 @@ function update-all --description 'Update everything: topgrade, plus what it can
     # announce it — otherwise it just looks like a hang.
     echo -e '\nRebuilding blink.cmp fuzzy matcher...'
     nvim --headless -c 'lua require("blink.cmp").build():pwait()' -c quitall
+
+    # Scoop updates can add entries to the user PATH, so restore the tracked list.
+    echo -e '\n―― User PATH ――'
+    pwsh -NoProfile -File ~/windows-setup/scripts/user-path.ps1 -Overwrite
 end
