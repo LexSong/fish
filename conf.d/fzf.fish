@@ -21,15 +21,25 @@ bind -M insert shift-tab fzf-tab
 
 # fzf is a native exe, so MSYS2 rewrites `--walker-root=/d/foo` into `D:/foo`,
 # and the results come back as `D:/foo/...`. fish's cd rejects that form. These
-# two widgets are copied from fzf 0.74.5; the only change is the `cygpath -u`
-# that turns results back into `/d/foo/...`.
+# two widgets are copied from fzf 0.74.5. Both add the `cygpath -u` that turns
+# results back into `/d/foo/...`. fzf-file-widget also handles a `name=` word.
 #
 # We keep fzf's walker and convert only the results. A custom lister in
 # FZF_CTRL_T_COMMAND would not help. MSYS2 `find` gives `/d/...` paths, but it
 # is slow, because MSYS2 emulates POSIX file metadata on every file. `fd` is a
 # native exe too, so it also returns `D:/...` paths.
 function fzf-file-widget -d "List files and folders"
+    # fzf's parser takes a prefix only from an option (`--file=`). So for
+    # `project=al` it searches for the whole word and finds nothing. We hide
+    # `project=` from the parser, and then pass it on as the prefix.
+    set -l token (commandline -t)
+    string match -qr -- '^(?<name>[[:alpha:]_][[:alnum:]_-]*=)(?<rest>.*)$' $token
+    and commandline -rt -- "$rest"
     set -l commandline (__fzf_parse_commandline)
+    if set -q name[1]
+        commandline -rt -- $token
+        set commandline[3] $name
+    end
     set -l dir $commandline[1]
     set -l fzf_query $commandline[2]
     set -l prefix $commandline[3]
