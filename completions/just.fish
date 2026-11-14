@@ -3,7 +3,15 @@
 # (`JUST_COMPLETE=fish 'C:\Users\...\just.exe' -- …`), and fish refuses to run
 # that -- "fish: Unknown command" -- so `just <TAB>` offers nothing at all.
 # just's dynamic completion protocol itself is fine, so just call it by name.
-complete -c just -f -a "(JUST_COMPLETE=fish just -- (commandline --current-process --tokenize --cut-at-cursor) (commandline --current-token) 2>/dev/null)"
+#
+# just is a native exe, so it ends a folder with `\` (`alpha\`), which fish
+# cannot continue from. We change that last `\` to `/`. The pattern stops at the
+# first tab, so a description is never changed.
+function __just_candidates
+    JUST_COMPLETE=fish just -- (commandline-words) 2>/dev/null |
+        string replace -r '^([^\t]*)\\\\(\t|$)' '$1/$2'
+end
+complete -c just -f -a "(__just_candidates)"
 
 # Past a recipe name (`just link <TAB>`), add fish's own file/folder completion:
 # just offers paths there too, but Windows-style (`..\lora-lab\`), which fish
