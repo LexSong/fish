@@ -12,3 +12,8 @@ function __just_candidates
         string replace -r '^([^\t]*)\\\\(\t|$)' '$1/$2'
 end
 complete -c just -f -a "(__just_candidates)"
+
+# just returns no candidates for a variable override (`just project=<TAB>`), so
+# there we turn fish's own file completion on. fish completes the path after
+# the `=`.
+complete -c just -F -n 'string match -qr -- "^[[:alpha:]_][[:alnum:]_-]*=" (commandline --current-token)'
