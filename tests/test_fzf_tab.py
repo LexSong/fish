@@ -20,8 +20,9 @@ from test_fzf_command_names import login_fish
 # pipe that check takes 30s. The variable exists only under Claude Code.
 READ_LINE = r"""
 set -e CLAUDE_CODE_MESSAGING_SOCKET
-set -l word "$(commandline --input=$line -t)"
-set -l before (commandline --input=$line -pc --tokens-expanded)
+set -l words (commandline-words --input=$line)
+set -l word $words[-1]
+set -l before $words[1..-2]
 set -l plan (fzf-tab-plan "$word" $before)
 """
 
