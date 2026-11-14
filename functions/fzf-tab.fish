@@ -21,7 +21,12 @@ function fzf-tab
         fzf_complete $opts $query
     end
 
-    # fzf_complete leaves the line alone on cancel, so we restore the word.
-    test "$(commandline)" = "$cleared"
-    and commandline -rt -- "$token"
+    if test "$(commandline)" = "$cleared"
+        # fzf_complete leaves the line alone on cancel, so we restore the word.
+        commandline -rt -- "$token"
+    else if string match -q -- '*= ' "$(commandline --cut-at-cursor)"
+        # fzf_complete adds a space after the result. A result that ends with
+        # `=` (`project=`, `--color=`) needs a value next, so we delete the space.
+        commandline -f backward-delete-char
+    end
 end
