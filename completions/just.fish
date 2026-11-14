@@ -12,12 +12,3 @@ function __just_candidates
         string replace -r '^([^\t]*)\\\\(\t|$)' '$1/$2'
 end
 complete -c just -f -a "(__just_candidates)"
-
-# Past a recipe name (`just link <TAB>`), add fish's own file/folder completion:
-# just offers paths there too, but Windows-style (`..\lora-lab\`), which fish
-# cannot continue from. Gated on the second token being a *known* recipe and not
-# the token still being typed, so bare `just <TAB>` / `just li<TAB>` are unaffected.
-complete -c just -F -n 'set -l t (commandline --current-process --tokenize --cut-at-cursor); \
-    set -q t[2]; \
-    and not string match -q -- "$t[2]" (commandline --current-token); \
-    and contains -- $t[2] (just --summary 2>/dev/null | string split " ")'
